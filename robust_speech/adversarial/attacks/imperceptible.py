@@ -281,7 +281,7 @@ class ImperceptibleASRAttack(Attacker):
         best_loss_1st_stage = [np.inf] * local_batch_size
         trans = [None] * local_batch_size
 
-        track_iter = [batch.id]
+        track_iter = batch.id
 
         for iter_1st_stage_idx in range(self.max_iter_1):
             # Zero the parameter gradients
