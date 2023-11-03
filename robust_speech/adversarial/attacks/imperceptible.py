@@ -281,7 +281,7 @@ class ImperceptibleASRAttack(Attacker):
         best_loss_1st_stage = [np.inf] * local_batch_size
         trans = [None] * local_batch_size
 
-        track_iter = batch.id
+        track_iter = batch.id.copy()
 
         for iter_1st_stage_idx in range(self.max_iter_1):
             # Zero the parameter gradients
@@ -370,8 +370,9 @@ class ImperceptibleASRAttack(Attacker):
                         trans[local_batch_size_idx] = decoded_output[
                             local_batch_size_idx
                         ]
-        with open("file_name.csv", "a") as f:
-            f.writelines([",".join(map(str, track_iter))])
+        to_write = ",".join(map(str, track_iter)) + "\n"
+        with open(self.save_audio_path + "/results.csv", "a") as f:
+            f.writelines([to_write])
         result = torch.stack(successful_adv_input)  # type: ignore
 
         batch.sig = original_input, batch.sig[1]
