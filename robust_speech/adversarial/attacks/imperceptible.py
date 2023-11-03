@@ -281,7 +281,7 @@ class ImperceptibleASRAttack(Attacker):
         best_loss_1st_stage = [np.inf] * local_batch_size
         trans = [None] * local_batch_size
 
-        track_iter = [id]
+        track_iter = [batch.id]
 
         for iter_1st_stage_idx in range(self.max_iter_1):
             # Zero the parameter gradients
@@ -371,7 +371,7 @@ class ImperceptibleASRAttack(Attacker):
                             local_batch_size_idx
                         ]
         with open("file_name.csv", "a") as f:
-            f.writelines([",".join(track_iter)])
+            f.writelines([",".join(map(str, track_iter))])
         result = torch.stack(successful_adv_input)  # type: ignore
 
         batch.sig = original_input, batch.sig[1]
