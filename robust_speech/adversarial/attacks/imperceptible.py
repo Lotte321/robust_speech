@@ -281,6 +281,8 @@ class ImperceptibleASRAttack(Attacker):
         best_loss_1st_stage = [np.inf] * local_batch_size
         trans = [None] * local_batch_size
 
+        track_iter = [id]
+
         for iter_1st_stage_idx in range(self.max_iter_1):
             # Zero the parameter gradients
             self.optimizer_1.zero_grad()
@@ -325,6 +327,7 @@ class ImperceptibleASRAttack(Attacker):
                 if len(pred) == len(tokens) and (pred == tokens).all():
                     # print("Found one")
                     # Adjust the rescale coefficient
+                    track_iter.append(iter_1st_stage_idx)
                     max_local_delta = np.max(
                         np.abs(
                             local_delta[local_batch_size_idx].detach(
@@ -367,7 +370,8 @@ class ImperceptibleASRAttack(Attacker):
                         trans[local_batch_size_idx] = decoded_output[
                             local_batch_size_idx
                         ]
-
+        with open("file_name.csv", "a") as f:
+            f.writelines([",".join(track_iter)])
         result = torch.stack(successful_adv_input)  # type: ignore
 
         batch.sig = original_input, batch.sig[1]
