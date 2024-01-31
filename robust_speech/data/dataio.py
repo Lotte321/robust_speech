@@ -220,11 +220,11 @@ def dataio_prepare(hparams):
         # assert isinstance(tokenizer, transformers.PreTrainedTokenizerFast) or isinstance(
         #    tokenizer, transformers.PreTrainedTokenizer)
 
-        @sb.utils.data_pipeline.takes("wrd")
+        @sb.utils.data_pipeline.takes("wrd", "target")
         @sb.utils.data_pipeline.provides(
-            "wrd", "tokens_list", "tokens_bos", "tokens_eos", "tokens"
+            "wrd", "tokens_list", "tokens_bos", "tokens_eos", "tokens", "target"
         )
-        def text_pipeline(wrd):
+        def text_pipeline(wrd, target):
             wrd = wrd
             yield wrd
             tokens_list = tokenizer.encode(wrd)
@@ -237,13 +237,14 @@ def dataio_prepare(hparams):
             yield tokens_eos
             tokens = torch.LongTensor(tokens_list)
             yield tokens
+            yield target
 
         sb.dataio.dataset.add_dynamic_item(datasets, text_pipeline)
 
         # 4. Set output:
         sb.dataio.dataset.set_output_keys(
             datasets,
-            ["id", "sig", "wrd", "tokens_bos", "tokens_eos", "tokens"],
+            ["id", "sig", "wrd", "tokens_bos", "tokens_eos", "tokens", "target"],
         )
 
     train_batch_sampler = None

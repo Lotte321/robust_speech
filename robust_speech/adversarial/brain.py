@@ -20,6 +20,7 @@ import numpy as np
 import robust_speech as rs
 from robust_speech.adversarial.attacks.attacker import Attacker, TrainableAttacker
 from robust_speech.adversarial.defenses.vote import ROVER_MAX_HYPS, ROVER_RECOMMENDED_HYPS, VoteEnsemble, Rover, MajorityVote
+from robust_speech.adversarial.utils import TargetGeneratorFromFixedTargets
 
 
 import pdb
@@ -783,7 +784,7 @@ class AdvASRBrain(ASRBrain):
 
             if self.attacker is not None:
                 adv_loss, adv_loss_target = self.evaluate_batch_adversarial(
-                    batch, stage=sb.Stage.TEST, target=target
+                    batch, stage=sb.Stage.TEST, target=TargetGeneratorFromFixedTargets(target=batch.target[0])
                 )
                 avg_test_adv_loss = self.update_average(
                     adv_loss, avg_test_adv_loss)
